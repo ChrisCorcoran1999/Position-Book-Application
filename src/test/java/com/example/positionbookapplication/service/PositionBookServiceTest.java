@@ -171,4 +171,28 @@ public class PositionBookServiceTest {
                 .isEqualTo(positionMap);
     }
 
+    @Test
+    public void testProcessTradeEvents_onlyAccountSecurityRefInEventReturned(){
+        List<TradeEvent> tradeEvents = new ArrayList<>();
+
+        tradeEvents.add(new TradeEvent(1L, EventType.SELL, ACCOUNT, SECURITY, 50L));
+        tradeEvents.add(new TradeEvent(2L, EventType.BUY, ACCOUNT, SECURITY, 75L));
+        tradeEvents.add(new TradeEvent(1L, EventType.CANCEL, ACCOUNT, SECURITY, 0L));
+
+        String positionKey = ACCOUNT + " " + SECURITY + " " + "75";
+
+        Map<String, List<TradeEvent>> positionMap = new HashMap<>();
+        List<TradeEvent> existingTradeEvents = new ArrayList<>(tradeEvents);
+        existingTradeEvents.add(new TradeEvent(3L, EventType.SELL, ACCOUNT, ALT_SECURITY, 50L));
+        positionMap.put(positionKey, existingTradeEvents);
+        positionBookService.setPositionInfoMap(positionMap);
+
+        Map<String, List<TradeEvent>> responseMap = new HashMap<>();
+        responseMap.put(positionKey, tradeEvents);
+
+        assertThat(positionBookService.processTradeEvents(tradeEvents))
+                .as("The list returned in the response should only be related to those that came in the response")
+                .isEqualTo(responseMap);
+    }
+
 }

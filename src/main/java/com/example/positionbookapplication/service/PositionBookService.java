@@ -16,12 +16,13 @@ public class PositionBookService {
 
     private Map<String, List<TradeEvent>> positionInfoMap = new HashMap<>();
 
-    public Map<String, List<TradeEvent>> processTradeEvents(List<TradeEvent> newTradeEvents){
 
+    public Map<String, List<TradeEvent>> processTradeEvents(List<TradeEvent> newTradeEvents){
+        List<String> positionKeysFromRequest = new ArrayList<>();
         Map<String, List<TradeEvent>> responseMap = new HashMap<>();
 
         newTradeEvents.forEach(newTradeEvent -> {
-            String positionKey = buildPositionKeyFromTradeEvent(newTradeEvent);
+            String positionKey = buildPositionKeyFromTradeEvent(newTradeEvent, positionKeysFromRequest);
 
             positionInfoMap.compute(positionKey, (key, val) -> {
                 if (val == null) {
@@ -32,7 +33,7 @@ public class PositionBookService {
             });
         });
 
-        positionInfoMap.keySet().forEach(positionKey -> {
+        positionKeysFromRequest.forEach(positionKey -> {
             List<TradeEvent> tradeEvents = positionInfoMap.get(positionKey);
 
             responseMap.compute(positionKey + " " + calculatePosition(tradeEvents),
@@ -53,8 +54,12 @@ public class PositionBookService {
      * @param tradeEvent
      * @return String {accountRef} + {securityRef}
      */
-    private String buildPositionKeyFromTradeEvent(TradeEvent tradeEvent) {
-        return tradeEvent.getAccountRef() + " " + tradeEvent.getSecurityRef();
+    private String buildPositionKeyFromTradeEvent(TradeEvent tradeEvent, List<String> positionKeysFromRequest) {
+        String positionKey = tradeEvent.getAccountRef() + " " + tradeEvent.getSecurityRef();
+        if (!positionKeysFromRequest.contains(positionKey)){
+            positionKeysFromRequest.add(positionKey);
+        }
+        return positionKey;
     }
 
     private String calculatePosition(List<TradeEvent> tradeEvents) {
