@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Validator class for trade event rest inputs
+ */
 public class TradeEventInputValidator {
 
     public void validateTradeEvents(List<TradeEvent> tradeEvents, PositionBookService positionBookService) throws ValidationException {

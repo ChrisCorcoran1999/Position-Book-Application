@@ -19,6 +19,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Rest controller for processing and retrieving trade events for or from the position book
+ */
 @RestController
 @RequestMapping("/api")
 public class PositionBookController {

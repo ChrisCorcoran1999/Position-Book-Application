@@ -8,6 +8,9 @@ import org.springframework.util.CollectionUtils;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ *  Position book service layer that handles the logic behind position calculation
+ */
 @Service
 public class PositionBookService {
 

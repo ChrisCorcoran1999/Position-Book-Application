@@ -19,21 +19,21 @@ public class TradeEventInputValidatorTest {
 
     private static final String SECURITY = "SEC01";
 
-    private static final TradeEvent BUY_EVENT = new TradeEvent(1L, EventType.BUY, ACCOUNT, SECURITY, 50L);
-
-    private static final TradeEvent SELL_EVENT = new TradeEvent(2L, EventType.SELL, ACCOUNT, SECURITY, 50L);
-
-    private static final TradeEvent CANCEL_EVENT = new TradeEvent(3L, EventType.CANCEL, ACCOUNT, SECURITY, 50L);
-
     PositionBookService positionBookService = new PositionBookService();
 
     TradeEventInputValidator tradeEventInputValidator = new TradeEventInputValidator();
 
+    private final TradeEvent buyEvent = new TradeEvent(1L, EventType.BUY, ACCOUNT, SECURITY, 50L);
+
+    private final TradeEvent sellEvent = new TradeEvent(2L, EventType.SELL, ACCOUNT, SECURITY, 50L);
+
+    private final TradeEvent cancelEvent = new TradeEvent(3L, EventType.CANCEL, ACCOUNT, SECURITY, 50L);
+
     @Test
     public void testValidateNoEventType() {
         List<TradeEvent> tradeEvents = new ArrayList<>();
-        BUY_EVENT.setEventType(null);
-        tradeEvents.add(BUY_EVENT);
+        buyEvent.setEventType(null);
+        tradeEvents.add(buyEvent);
 
         assertThatThrownBy(() -> tradeEventInputValidator.validateTradeEvents(tradeEvents, positionBookService))
                 .as("A trade event without an event should throw an error")
@@ -43,10 +43,10 @@ public class TradeEventInputValidatorTest {
     @Test
     public void testValidateBuySellEvent_matchingId() {
         List<TradeEvent> tradeEvents = new ArrayList<>();
-        tradeEvents.add(BUY_EVENT);
+        tradeEvents.add(buyEvent);
 
         List<TradeEvent> existingTradeEvents = new ArrayList<>();
-        existingTradeEvents.add(BUY_EVENT);
+        existingTradeEvents.add(buyEvent);
 
         Map<String, List<TradeEvent>> positionBookMap = new HashMap<>();
         positionBookMap.put("anyKey", existingTradeEvents);
@@ -61,7 +61,7 @@ public class TradeEventInputValidatorTest {
     @Test
     public void testValidateCancelEvent_noMatchingId() {
         List<TradeEvent> tradeEvents = new ArrayList<>();
-        tradeEvents.add(CANCEL_EVENT);
+        tradeEvents.add(cancelEvent);
 
         assertThatThrownBy(() -> tradeEventInputValidator.validateTradeEvents(tradeEvents, positionBookService))
                 .as("Adding a buy/sell trade event that matches and existing trade event Id should throw an error")
@@ -72,8 +72,8 @@ public class TradeEventInputValidatorTest {
     @Test
     public void testValidateBuySellEvent_noPositionValue() {
         List<TradeEvent> tradeEvents = new ArrayList<>();
-        BUY_EVENT.setPositionValue(null);
-        tradeEvents.add(BUY_EVENT);
+        buyEvent.setPositionValue(null);
+        tradeEvents.add(buyEvent);
 
         assertThatThrownBy(() -> tradeEventInputValidator.validateTradeEvents(tradeEvents, positionBookService))
                 .as("A trade event without an event should throw an error")
@@ -83,8 +83,8 @@ public class TradeEventInputValidatorTest {
     @Test
     public void testValidateBuySellEvent_negativePositionValue() {
         List<TradeEvent> tradeEvents = new ArrayList<>();
-        BUY_EVENT.setPositionValue(-1L);
-        tradeEvents.add(BUY_EVENT);
+        buyEvent.setPositionValue(-1L);
+        tradeEvents.add(buyEvent);
 
         assertThatThrownBy(() -> tradeEventInputValidator.validateTradeEvents(tradeEvents, positionBookService))
                 .as("A trade event without an event should throw an error")
@@ -94,8 +94,8 @@ public class TradeEventInputValidatorTest {
     @Test
     public void testValidateEvent_noId() {
         List<TradeEvent> tradeEvents = new ArrayList<>();
-        BUY_EVENT.setId(null);
-        tradeEvents.add(BUY_EVENT);
+        buyEvent.setId(null);
+        tradeEvents.add(buyEvent);
 
         assertThatThrownBy(() -> tradeEventInputValidator.validateTradeEvents(tradeEvents, positionBookService))
                 .as("A trade event without an event should throw an error")
@@ -105,8 +105,8 @@ public class TradeEventInputValidatorTest {
     @Test
     public void testValidateEvent_noSecurityRef() {
         List<TradeEvent> tradeEvents = new ArrayList<>();
-        BUY_EVENT.setSecurityRef("");
-        tradeEvents.add(BUY_EVENT);
+        buyEvent.setSecurityRef("");
+        tradeEvents.add(buyEvent);
 
         assertThatThrownBy(() -> tradeEventInputValidator.validateTradeEvents(tradeEvents, positionBookService))
                 .as("A trade event without an event should throw an error")
@@ -116,8 +116,8 @@ public class TradeEventInputValidatorTest {
     @Test
     public void testValidateEvent_nullSecurityRef() {
         List<TradeEvent> tradeEvents = new ArrayList<>();
-        BUY_EVENT.setSecurityRef(null);
-        tradeEvents.add(BUY_EVENT);
+        buyEvent.setSecurityRef(null);
+        tradeEvents.add(buyEvent);
 
         assertThatThrownBy(() -> tradeEventInputValidator.validateTradeEvents(tradeEvents, positionBookService))
                 .as("A trade event without an event should throw an error")
@@ -127,8 +127,8 @@ public class TradeEventInputValidatorTest {
     @Test
     public void testValidateEvent_noAccountRef() {
         List<TradeEvent> tradeEvents = new ArrayList<>();
-        BUY_EVENT.setSecurityRef("");
-        tradeEvents.add(BUY_EVENT);
+        buyEvent.setAccountRef("");
+        tradeEvents.add(buyEvent);
 
         assertThatThrownBy(() -> tradeEventInputValidator.validateTradeEvents(tradeEvents, positionBookService))
                 .as("A trade event without an event should throw an error")
@@ -138,8 +138,8 @@ public class TradeEventInputValidatorTest {
     @Test
     public void testValidateEvent_nullAccountRef() {
         List<TradeEvent> tradeEvents = new ArrayList<>();
-        BUY_EVENT.setSecurityRef(null);
-        tradeEvents.add(BUY_EVENT);
+        buyEvent.setAccountRef(null);
+        tradeEvents.add(buyEvent);
 
         assertThatThrownBy(() -> tradeEventInputValidator.validateTradeEvents(tradeEvents, positionBookService))
                 .as("A trade event without an event should throw an error")
@@ -149,8 +149,8 @@ public class TradeEventInputValidatorTest {
     @Test
     public void testValidateBuySellEvent_validEventDoesntError() {
         List<TradeEvent> tradeEvents = new ArrayList<>();
-        tradeEvents.add(SELL_EVENT);
-        tradeEvents.add(BUY_EVENT);
+        tradeEvents.add(sellEvent);
+        tradeEvents.add(buyEvent);
 
         assertThatNoException()
                 .as("Valid events should not throw validation exceptions")
@@ -161,11 +161,11 @@ public class TradeEventInputValidatorTest {
     @Test
     public void testValidateCancelEvent_validEventDoesntError() {
         List<TradeEvent> tradeEvents = new ArrayList<>();
-        tradeEvents.add(CANCEL_EVENT);
+        tradeEvents.add(cancelEvent);
 
         List<TradeEvent> existingTradeEvents = new ArrayList<>();
-        BUY_EVENT.setId(CANCEL_EVENT.getId());
-        existingTradeEvents.add(BUY_EVENT);
+        buyEvent.setId(cancelEvent.getId());
+        existingTradeEvents.add(buyEvent);
 
         Map<String, List<TradeEvent>> positionBookMap = new HashMap<>();
         positionBookMap.put("anyKey", existingTradeEvents);
